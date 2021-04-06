@@ -4,15 +4,13 @@ import assert from "assert";
 /**
  * Builds a utf-16 char dictionary
  */
-const buildDictionary = (reverse: boolean = false) => {
+export const buildDictionary = (reverse: boolean = false) => {
   const dictionary: any = {};
   if (reverse) {
     for (let i = 0; i < 2 ** 16; i++) dictionary[i] = String.fromCharCode(i); // build intial dictionary
-    assert(Object.keys(dictionary).length === 2 ** 16);
     return dictionary as { [key: number]: string | undefined };
   }
   for (let i = 0; i < 2 ** 16; i++) dictionary[String.fromCharCode(i)] = i; // build intial dictionary
-  assert(Object.keys(dictionary).length === 2 ** 16);
   return dictionary as { [key: string]: number | undefined };
 };
 
@@ -55,8 +53,6 @@ export const decompress = (inputBuffer: number[]) => {
   // console.log(inputBuffer);
   for (let i = 0; i < inputBuffer.length; i++) {
     const curWord = dictionary[inputBuffer[i]] as string;
-    assert(inputBuffer[i]);
-    assert(curWord !== undefined);
     const nextWord = dictionary[inputBuffer[i + 1]];
     output += curWord;
     // next string can be decoded
@@ -71,23 +67,3 @@ export const decompress = (inputBuffer: number[]) => {
   }
   return output;
 };
-
-//console.log(compress("TOBEORNOTTOBEORTOBEORNOT"));
-decompress([
-  84,
-  79,
-  66,
-  69,
-  79,
-  82,
-  78,
-  79,
-  84,
-  65536,
-  65538,
-  65540,
-  65545,
-  65539,
-  65541,
-  65543,
-]);

@@ -1,22 +1,43 @@
-import { test1 } from "../test/test1";
-import { compress, decompress } from "./index";
-import * as fs from "fs";
-import * as path from "path";
+import { test1 } from "../__test__/test1";
+import { compress, decompress, buildDictionary } from "./index";
 
-it("should parse big file without crashing", () => {
-  const output = compress(JSON.stringify(test1));
-  fs.writeFileSync(
-    path.resolve("./test/test1.out"), // weird that path ressolves differently here than in imports
-    JSON.stringify(output, null, 2)
-  );
+const assertIdentity = (inputString: string) => {
+  expect(decompress(compress(inputString))).toBe(inputString);
+};
+
+it("should parse big file correctly", () => {
+  assertIdentity(JSON.stringify(test1));
 });
 
-it("should encode and decode symetically for small file", () => {
-  const input = "TOBEORNOTTOBEORTOBEORNOT";
-  const compressed = compress(input);
-  console.log(compressed);
-  const decompressed = decompress(compressed);
-  expect(decompressed).toBe(input);
+it("should handle edge cases around non-truthy values", () => {
+  assertIdentity(String.fromCharCode(0)); // zero
+  assertIdentity(""); // empty string
+});
+
+it("should parse small strings correctly", () => {
+  assertIdentity(".");
+  assertIdentity("abcdefghijklmnopqrstuvwxyz");
+  assertIdentity(
+    "         .   .   .   .   .   adsajvc a.kd.sa cvxzmt fcsa.kmt adxc;lawr ||"
+  );
+  assertIdentity("OOBAR");
+  assertIdentity("OOBAROOBAROOBAR");
+  assertIdentity("TOBETOBETOBETOBETOBETOBE");
+});
+
+it("dictionary should handle unicode", () => {
+  const charArray = [
+    ..."😀😃😄😁😆😅😂🤣😊😇🙂🙃😉😌😍🥰😘😩🥺😢😭😤😠😡🤬🤯😳🥵",
+  ];
+  const newDict = buildDictionary() as { [key: string]: any };
+  charArray.forEach((char) => {
+    console.log(char);
+    expect(newDict[char]).not.toEqual(undefined);
+  });
+});
+
+it("should parse unicode correctly", () => {
+  assertIdentity("😀😃😄😁😆😅😂🤣😊😇🙂🙃😉😌😍🥰😘😩🥺😢😭😤😠😡🤬🤯😳🥵");
 });
 
 it("should encode and decode symetrically for big file", () => {
