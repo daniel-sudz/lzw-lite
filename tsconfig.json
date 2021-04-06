@@ -3,6 +3,7 @@
     "module": "commonjs",
     "noImplicitReturns": true,
     "noImplicitAny": true,
+    "allowJs": true,
     //"noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
@@ -10,7 +11,8 @@
     "target": "ESNext",
     "isolatedModules": true,
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
   "compileOnSave": true,
   "include": ["src/**/*"]
