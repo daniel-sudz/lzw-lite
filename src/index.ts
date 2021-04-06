@@ -1,10 +1,16 @@
+// TODO: dictionary zero entries will fail
+
 /**
  * Builds a utf-16 char dictionary
  */
-const buildDictionary = () => {
-  const dictionary: { [key: string]: number | undefined } = {};
+const buildDictionary = (reverse: boolean = false) => {
+  const dictionary: any = {};
+  if (reverse) {
+    for (let i = 0; i < 2 ** 16; i++) dictionary[i] = String.fromCharCode(i); // build intial dictionary
+    return dictionary as { [key: number]: string | undefined };
+  }
   for (let i = 0; i < 2 ** 16; i++) dictionary[String.fromCharCode(i)] = i; // build intial dictionary
-  return dictionary;
+  return dictionary as { [key: string]: number | undefined };
 };
 
 /**
@@ -16,13 +22,16 @@ const buildDictionary = () => {
  */
 export const compress = (inputString: string) => {
   const charArray = [...inputString];
-  const dictionary = buildDictionary();
+  const dictionary = buildDictionary() as { [key: string]: number | undefined };
   let dictSize = 2 ** 16;
   const emit: number[] = []; // output array of words
   for (let i = 0; i < charArray.length; i++) {
     let partial = charArray[i];
     // find longest subset that already exists in dictionary
-    while (i + 1 < charArray.length && dictionary[partial + charArray[i + 1]]) {
+    while (
+      i + 1 < charArray.length &&
+      dictionary[partial + charArray[i + 1]] != undefined
+    ) {
       partial += charArray[i + 1];
       i++;
     }
@@ -35,7 +44,27 @@ export const compress = (inputString: string) => {
 };
 
 export const decompress = (inputBuffer: number[]) => {
-  const dictionary = buildDictionary();
+  let output = "";
+  let dictSize = 2 ** 16;
+  const dictionary = buildDictionary(true) as {
+    [key: number]: string | undefined;
+  };
+  // console.log(inputBuffer);
+  for (let i = 0; i < inputBuffer.length; i++) {
+    const curWord = dictionary[inputBuffer[i]] as string;
+    const nextWord = dictionary[inputBuffer[i + 1]];
+    output += curWord;
+    // next string can be decoded
+    if (nextWord != undefined) {
+      dictionary[dictSize + 1] = curWord + nextWord.charAt(0);
+    }
+    // next string cannot be decoded, must be in current iteration
+    else {
+      dictionary[dictSize + 1] = curWord + curWord.charAt(0);
+    }
+    dictSize++;
+  }
+  return output;
 };
 
 //console.log(compress("TOBEORNOTTOBEORTOBEORNOT"));
