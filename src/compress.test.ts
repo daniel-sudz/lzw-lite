@@ -11,16 +11,17 @@ it("should parse big file without crashing", () => {
   );
 });
 
+it("should encode and decode symetically for small file", () => {
+  const input = "TOBEORNOTTOBEORTOBEORNOT";
+  const compressed = compress(input);
+  console.log(compressed);
+  const decompressed = decompress(compressed);
+  expect(decompressed).toBe(input);
+});
+
 it("should encode and decode symetrically for big file", () => {
   const input = JSON.stringify(test1);
   const compressed = compress(input);
   const decompressed = decompress(compressed);
-  fs.writeFileSync(
-    path.resolve("./test/test2.input.out"), // weird that path ressolves differently here than in imports
-    JSON.stringify(input, null, 2)
-  );
-  fs.writeFileSync(
-    path.resolve("./test/test2.decompressed.out"), // weird that path ressolves differently here than in imports
-    JSON.stringify(decompressed, null, 2)
-  );
+  expect(decompressed).toBe(input);
 });
