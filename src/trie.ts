@@ -11,33 +11,24 @@ interface node {
   };
 }
 
-interface nodeReverse {
-  byteValue: number;
-  /** Children query by byte value */
-  children: {
-    [key: number]: node | undefined;
-  };
-}
-
 /**
  * Build initial 8-bit dictionary
  */
-const buildDictionary = (reverse: boolean = false) => {
+const buildDictionary = () => {
   const dictionary: any = {
     children: {},
   };
   for (let i = 0; i < 256; i++) {
     dictionary.children[i] = {
-      [reverse ? "byteValue" : "code"]: i,
+      code: i,
       children: {},
     };
   }
-  return dictionary as node | nodeReverse;
+  return dictionary as node;
 };
 
 export const compress = (inputString: string) => {
   const uint8Array = new TextEncoder().encode(inputString);
-  console.log(uint8Array);
   const dictionary = buildDictionary() as node;
   let currentCode = 256;
   const emit: number[] = [];
@@ -60,7 +51,10 @@ export const compress = (inputString: string) => {
       currentCode++;
     }
   }
-  //console.log(emit);
+  console.log({
+    length: emit.length,
+    base: currentCode,
+  });
   return emit;
 };
 
@@ -92,8 +86,11 @@ export const decompress = (codeArray: number[]) => {
     emit.push(...curSequence);
     currentCode++;
   }
-  console.log(emit);
-  return emit;
+  const buffer = new Uint8Array(emit.length);
+  for (let i = 0; i < emit.length; i++) {
+    buffer[i] = emit[i];
+  }
+  return new TextDecoder().decode(buffer);
 };
 //compress("😆😆");
-decompress(compress("😆😆😆😆"));
+decompress(compress("AAA"));

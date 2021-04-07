@@ -1,5 +1,9 @@
+/**
+ * @jest-environment node
+ */
+
 import { test1 } from "../__test__/test1";
-import { compress, decompress, buildDictionary } from "./index";
+import { compress, decompress } from "./trie";
 
 const assertIdentity = (inputString: string) => {
   expect(decompress(compress(inputString))).toBe(inputString);
@@ -25,24 +29,6 @@ it("should parse small strings correctly", () => {
   assertIdentity("TOBETOBETOBETOBETOBETOBE");
 });
 
-it("dictionary should handle unicode", () => {
-  const charArray = [
-    ..."😀😃😄😁😆😅😂🤣😊😇🙂🙃😉😌😍🥰😘😩🥺😢😭😤😠😡🤬🤯😳🥵",
-  ];
-  const newDict = buildDictionary() as { [key: string]: any };
-  charArray.forEach((char) => {
-    console.log(char);
-    expect(newDict[char]).not.toEqual(undefined);
-  });
-});
-
 it("should parse unicode correctly", () => {
   assertIdentity("😀😃😄😁😆😅😂🤣😊😇🙂🙃😉😌😍🥰😘😩🥺😢😭😤😠😡🤬🤯😳🥵");
-});
-
-it("should encode and decode symetrically for big file", () => {
-  const input = JSON.stringify(test1);
-  const compressed = compress(input);
-  const decompressed = decompress(compressed);
-  expect(decompressed).toBe(input);
 });
