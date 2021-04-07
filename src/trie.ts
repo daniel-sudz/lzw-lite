@@ -1,23 +1,42 @@
+// http://warp.povusers.org/EfficientLZW/part3.html
+// Optimizing for dynamic bit sizes
+
 interface node {
+  /** Emit code of sequence */
   code: number;
+  /** Children query by sequence code */
   children: {
     [key: number]: node | undefined;
   };
 }
 
-export const compress = (inputString: string) => {
-  const uint8Array = new TextEncoder().encode(inputString);
-  const dictionary: node = {
-    code: 0,
+interface nodeReverse {
+  byteValue: number;
+  /** Children query by byte value */
+  children: {
+    [key: number]: node | undefined;
+  };
+}
+
+/**
+ * Build initial 8-bit dictionary
+ */
+const buildDictionary = (reverse: boolean = false) => {
+  const dictionary: any = {
     children: {},
   };
-  // build initial 8-bit dictionary
   for (let i = 0; i < 256; i++) {
     dictionary.children[i] = {
-      code: i,
+      [reverse ? "byteValue" : "code"]: i,
       children: {},
     };
   }
+  return dictionary as node | nodeReverse;
+};
+
+export const compress = (inputString: string) => {
+  const uint8Array = new TextEncoder().encode(inputString);
+  const dictionary = buildDictionary() as node;
   let currentCode = 256;
   const emit: number[] = [];
   // iterate through byte array
@@ -42,4 +61,8 @@ export const compress = (inputString: string) => {
   console.log(emit);
 };
 
-compress("😆😆");
+export const decompress = (codeArray: number[]) => {
+  const dictionary = buildDictionary() as node;
+};
+
+compress("😆😆😆😆😆😆");
