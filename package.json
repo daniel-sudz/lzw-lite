@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node lib/index.js",
-    "test": "jest --testPathIgnorePatterns /lib"
+    "start": "node lib/src/index.js",
+    "test": "jest --testPathIgnorePatterns /lib",
+    "trie": "node lib/src/trie.js"
   },
   "author": "",
   "license": "ISC",

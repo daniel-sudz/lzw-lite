@@ -1,5 +1,8 @@
-import assert from "assert";
-// TODO: dictionary zero entries will fail
+// NOTE
+// BLOB NOT SUPPORTED ON SAFARI
+// HAVE TO USE ARRAY BUFFER
+// https://developers.google.com/web/fundamentals/instant-and-offline/web-storage/indexeddb-best-practices
+// https://stackoverflow.com/questions/6965107/converting-between-strings-and-arraybuffers
 
 /**
  * Builds a utf-16 char dictionary
@@ -23,6 +26,8 @@ export const buildDictionary = (reverse: boolean = false) => {
  */
 export const compress = (inputString: string) => {
   const charArray = [...inputString];
+  const encoder = new TextEncoder();
+  const uint8Array = encoder.encode(inputString);
   const dictionary = buildDictionary() as { [key: string]: number | undefined };
   let dictSize = 2 ** 16;
   const emit: number[] = []; // output array of words
