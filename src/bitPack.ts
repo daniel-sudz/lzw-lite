@@ -1,45 +1,63 @@
 /**
- * Flips bit position of number
+ * Inverts bit for given position
+ * Indexed 0-7 (right-left)
  * https://medium.com/@parkerjmed/practical-bit-manipulation-in-javascript-bfd9ef6d6c30
  */
-const flipBit = (byte: number, pos: number) => byte ^ (1 << (pos - 1));
+export const flipBit = (byte: number, pos: number) => byte ^ (1 << pos);
+
+/**
+ * Returns true if bit is set for given position
+ * Indexed 0-7 (right-left)
+ */
+export const readBit = (byte: number, pos: number) => !!(byte & (1 << pos));
+
+export function* bitsCounter(totalCycles: number) {
+  let codeRangeUpperBound = 255; // initial dictionary is built from 0-255
+  let currentCode = 255;
+  let currentBitsNeeded = 8;
+  let cycleCount = 0;
+  while (true) {
+    if (currentCode > codeRangeUpperBound) {
+      currentBitsNeeded++;
+      codeRangeUpperBound *= 2;
+    }
+    currentCode++;
+    cycleCount++;
+    yield currentBitsNeeded;
+    if (cycleCount === totalCycles) break;
+  }
+}
 
 /** Pack an LZW code array efficiently into bits */
-export const bitPack = (codeArray: number[]) => {
+export const bitPack = (codeArray: number[]): Uint8Array => {
   /**
-   * Calculate total bytes needed to pack code array
+   * Calculate total bits needed to pack code array
    */
-  let codeRange = 255; // initial dictionary is built from 0-255
+  let counter = bitsCounter(codeArray.length - 1);
   let totalBitsNeeded = 0;
-  for (let i = 0; i < codeArray.length; i++) {
-    totalBitsNeeded += calculateBitsNeeded(codeRange);
-    codeRange++;
+  for (const bitLength of counter) {
+    totalBitsNeeded += bitLength;
   }
   // pre-allocate uint8-byte array
   const buffer = new Uint8Array(Math.ceil(totalBitsNeeded / 8));
+
+  counter = bitsCounter(codeArray.length - 1); // reset counter
+  let i = 0;
   let currentByte = 0;
   let currentBit = 0;
-
-  for (let i = 0; i < codeArray.length; i++) {
+  for (const bitLength of counter) {
     const code = codeArray[i];
+    for (let bitPos = 0; bitPos < bitLength; bitPos++) {
+      if (currentBit === 8) {
+        currentByte++;
+        currentBit = 0;
+      }
+      // copy over bit to buffer
+      if (readBit(code, bitPos)) {
+        buffer[currentByte] = flipBit(buffer[currentByte], bitPos);
+      }
+    }
+    i++;
   }
-};
-
-/** Finds leftmost bit by bitshifting by one (ceil(log base 2) + 1 effectively)
- *  This is very slow (about 100x slower than Math.log2)
- *  However, Math.log2 is imprecise for certain inputs due to floating point errors and cannot be used
- */
-export const calculateBitsNeeded = (code: number) => {
-  /**
-   * In JS, numbers are cast to 32-bit (signed) ints for bit-wise operators
-   * Regardless, such large codes would make the algo useless without a dictionary reset
-   */
-  if (code >= 2 ** 31) {
-    throw "code > 31 bits";
-  }
-  let bitsNeeded = 1;
-  while ((code >>= 1)) {
-    bitsNeeded++;
-  }
-  return bitsNeeded;
+  return buffer;
 };
