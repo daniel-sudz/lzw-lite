@@ -19,12 +19,12 @@ export function* bitsCounter(totalCycles: number) {
   while (true) {
     if (currentCode > codeRangeUpperBound) {
       currentBitsNeeded++;
-      codeRangeUpperBound *= 2;
+      codeRangeUpperBound = 2 * codeRangeUpperBound + 1;
     }
     currentCode++;
-    cycleCount++;
-    yield currentBitsNeeded;
     if (cycleCount === totalCycles) break;
+    yield currentBitsNeeded;
+    cycleCount++;
   }
 }
 
