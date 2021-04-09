@@ -24,6 +24,10 @@ const compressed: Uint8Array = compress(mystringToCompress);
 const myOriginalString = decompress(compressed);
 ```
 
+# A note on compilation targets
+
+For optimal bundle size, ```lzw-lite``` is compiled with target ```ESNext```. The ```package.json``` exposes both a type ```module``` (preffered) and type ```UMD``` export. If your target does not support the given ```ESM``` features, you will have to recompile/polyfill with your own bundler.  
+
 # Missing Optimizations/Problems
 
 1) Dictionary resets for large files 
