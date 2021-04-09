@@ -17,6 +17,11 @@ jobs:
           node-version: '12.x'
           registry-url: 'https://npm.pkg.github.com'
           
+      - name: Init Git
+        run: |
+          git config --global user.email "<>"
+          git config --global user.name "Github Actions Bot"
+          
       - name: Publish
         run: |
           npm i
@@ -33,10 +38,7 @@ jobs:
           
       - name: Commit Version Bump
         run: |
-          git config --global user.email "<>"
-          git config --global user.name "Github Actions Bot"
-          git add package.json
-          git commit -m "NPM Auto Version Bump" || true # ensures 0 exit code when no files have changed
+          git pull
           git push
         
 
