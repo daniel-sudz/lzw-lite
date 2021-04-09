@@ -16,6 +16,7 @@ jobs:
         with:
           node-version: '12.x'
           registry-url: 'https://npm.pkg.github.com'
+          
       - name: Publish
         run: |
           npm i
@@ -24,6 +25,17 @@ jobs:
           npm run webpack     # build production bundles
           npm run ts-publish  # link .d.ts declaration files to publish folder
           npm config set //registry.npmjs.org/:_authToken $NPM_AUTH_TOKEN
+          npm version patch   # auto prepend version bump
           npm publish         # ship it 🚀🚀🚀
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM }}
+          
+      - name: Commit Version Bump
+        run: |
+          git config --global user.email "<>"
+          git config --global user.name "Github Actions Bot"
+          git add package.json
+          git commit -m "NPM Auto Version Bump" || true # ensures 0 exit code when no files have changed
+          git push
+        
+
