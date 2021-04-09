@@ -5,7 +5,7 @@
 interface node {
   /** Emit code of sequence */
   code: number;
-  /** Children query by sequence code */
+  /** Children query by byte value */
   children: {
     [key: number]: node | undefined;
   };
@@ -51,10 +51,6 @@ export const compress = (inputString: string) => {
       currentCode++;
     }
   }
-  console.log({
-    length: emit.length,
-    base: currentCode,
-  });
   return emit;
 };
 

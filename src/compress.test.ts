@@ -2,14 +2,16 @@
  * @jest-environment node
  */
 
-import { test1 } from "../__test__/test1";
 import { compress, decompress } from "./trie";
+import * as fs from "fs";
 
 const assertIdentity = (inputString: string) => {
   expect(decompress(compress(inputString))).toBe(inputString);
 };
 
 it("should parse big file correctly", () => {
+  const test1 = fs.readFileSync("./__test__/test1.json", "utf8");
+  fs.writeFileSync("./OUT", JSON.stringify(test1));
   assertIdentity(JSON.stringify(test1));
 });
 
