@@ -1,0 +1,6 @@
+# Ignore everything
+*
+
+# Except publishing dir
+!dist
+package.json

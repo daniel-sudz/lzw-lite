@@ -1,6 +1,6 @@
 const path = require("path");
 
-module.exports = {
+const baseConfig = {
   entry: "./src/lzw.ts",
   mode: "production",
   module: {
@@ -15,14 +15,31 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".js"],
   },
+};
+
+const moduleExport = {
+  ...baseConfig,
+  experiments: {
+    outputModule: true,
+  },
   output: {
-    filename: "lzw.min.js",
+    filename: "lzw.module.min.js",
     path: path.resolve(__dirname, "dist"),
     library: {
       type: "module",
     },
   },
-  experiments: {
-    outputModule: true,
+};
+
+const umdExport = {
+  ...baseConfig,
+  output: {
+    filename: "lzw.umd.min.js",
+    path: path.resolve(__dirname, "dist"),
+    library: {
+      type: "umd",
+    },
   },
 };
+
+module.exports = [moduleExport, umdExport];
