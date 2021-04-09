@@ -11,7 +11,13 @@ const assertIdentity = (inputString: string) => {
 
 it("should parse big file correctly", () => {
   const test1 = fs.readFileSync("./__test__/test1.json", "utf8");
-  assertIdentity(test1);
+  const test2 = fs.readFileSync("./__test__/test2.json", "utf8");
+  const test3 = fs.readFileSync("./__test__/test3.json", "utf8");
+  const test4 = fs.readFileSync("./__test__/test4.json", "utf8");
+  const test5 = fs.readFileSync("./__test__/test5.json", "utf8");
+  [test1, test2, test3, test4, test5].forEach((test) => {
+    assertIdentity(test);
+  });
 });
 
 it("should handle edge cases around non-truthy values", () => {

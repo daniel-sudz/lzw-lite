@@ -1,5 +1,5 @@
 # Test cases
 
-## test1.json
+## test1.json, test2.json, test3.json, test4.json, test5.json
 
-from https://raw.githubusercontent.com/microsoft/FluidFrameworkTestData/8229cfcffd675b59da8172b6f7e7ae8df813a9b6/snapshotTestContent/HotBugs2/messages.json
+Mid-size stress tests taken from https://github.com/microsoft/FluidFrameworkTestData/tree/main/snapshotTestContent
