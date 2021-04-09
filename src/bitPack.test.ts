@@ -1,4 +1,5 @@
-import { flipBit, readBit, bitsCounter, bitPack } from "./bitPack";
+import { flipBit, readBit, bitsCounter, bitPack, bitUnpack } from "./bitPack";
+import assert from "assert";
 
 it("readBit works as expected", () => {
   const byte = 0b10101001;
@@ -44,5 +45,26 @@ it("bitsCounter works as expected", () => {
 });
 
 it("bitPack works as expected", () => {
-  console.log(bitPack([0, 1, 2, 3]));
+  const assertUint8ArrayEquals = (Uint8: Uint8Array, assertArray: number[]) => {
+    const toNumberArray = Array.from(Uint8);
+    assert.deepStrictEqual(toNumberArray, assertArray);
+  };
+  assertUint8ArrayEquals(bitPack([]), []);
+  assertUint8ArrayEquals(bitPack([0]), [0]);
+  assertUint8ArrayEquals(bitPack([0, 0]), [0, 0, 0]);
+  assertUint8ArrayEquals(bitPack([1, 1, 1]), [1, 1, 2, 0]); // manual calculation
+});
+
+it("bitUnpack works as expected", () => {
+  assert.deepStrictEqual(bitUnpack(Uint8Array.from([1, 1, 2, 0])), [1, 1, 1]);
+});
+
+it("integration test for bitPack/bitUnpack", () => {
+  const assertIdentity = (codeArray: number[]) => {
+    assert.deepStrictEqual(bitUnpack(bitPack(codeArray)), codeArray);
+  };
+  assertIdentity([]);
+  assertIdentity([0]);
+  assertIdentity([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  assertIdentity([255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265]);
 });
