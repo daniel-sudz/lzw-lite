@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 
-import { compress, decompress } from "./trie";
+import { compress, decompress } from "./lzw";
 import * as fs from "fs";
 
 const assertIdentity = (inputString: string) => {
