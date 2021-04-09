@@ -1,6 +1,6 @@
 {
   "name": "lzw-lite",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A tiny, text-based LZW implementation for JS with built-in optimizations. Useful for IndexDB storage with minimal overhead.",
   "main": "dist/lzw.umd.min.js",
   "module": "dist/lzw.module.min.js",
