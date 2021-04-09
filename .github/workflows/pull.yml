@@ -1,0 +1,28 @@
+name: PR-Check
+
+on:
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+          registry-url: 'https://npm.pkg.github.com'
+          
+      - name: Run PR Checks
+        run: |
+          npm i
+          npm run tsc                                                       # type check with plain tsc just in case
+          npm run test                                                      # run tests
+          npm run webpack                                                   # build production bundle to see sizes if needed
+
+   
