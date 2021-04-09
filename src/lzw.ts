@@ -1,7 +1,3 @@
-// http://warp.povusers.org/EfficientLZW/part3.html
-// Optimizing for dynamic bit sizes
-// note: applicable to sending data to server
-
 import { bitPack, bitUnpack } from "./bitPack";
 
 interface node {
@@ -85,9 +81,5 @@ export const decompress = (codeArrayPacked: Uint8Array) => {
     emit.push(...curSequence);
     currentCode++;
   }
-  const buffer = new Uint8Array(emit.length);
-  for (let i = 0; i < emit.length; i++) {
-    buffer[i] = emit[i];
-  }
-  return new TextDecoder().decode(buffer);
+  return new TextDecoder().decode(Uint8Array.from(emit));
 };
