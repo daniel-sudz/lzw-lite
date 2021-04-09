@@ -21,10 +21,8 @@ jobs:
         run: |
           git config --global user.email "<>"
           git config --global user.name "Github Actions Bot"
-          git config pull.ff only                                           # fast forward branches
           npm version patch                                                 # auto prepend version bump
-          git pull                                                          # in case another commit happened during workflow setup
-          git push
+          git push origin master
           
           
       - name: Publish
