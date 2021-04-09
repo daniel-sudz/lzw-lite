@@ -2,6 +2,8 @@
 // Optimizing for dynamic bit sizes
 // note: applicable to sending data to server
 
+import { bitPack, bitUnpack } from "./bitPack";
+
 interface node {
   /** Emit code of sequence */
   code: number;
@@ -51,7 +53,7 @@ export const compress = (inputString: string) => {
       currentCode++;
     }
   }
-  return emit;
+  return bitPack(emit);
 };
 
 interface reverseDictionary {
@@ -59,7 +61,8 @@ interface reverseDictionary {
   [key: number]: number[];
 }
 
-export const decompress = (codeArray: number[]) => {
+export const decompress = (codeArrayPacked: Uint8Array) => {
+  const codeArray = bitUnpack(codeArrayPacked);
   const emit: number[] = [];
   let currentCode = 256;
   const dictionary: reverseDictionary = {};
@@ -88,5 +91,3 @@ export const decompress = (codeArray: number[]) => {
   }
   return new TextDecoder().decode(buffer);
 };
-//compress("😆😆");
-decompress(compress("AAA"));

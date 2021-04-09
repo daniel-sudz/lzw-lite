@@ -11,8 +11,7 @@ const assertIdentity = (inputString: string) => {
 
 it("should parse big file correctly", () => {
   const test1 = fs.readFileSync("./__test__/test1.json", "utf8");
-  fs.writeFileSync("./OUT", JSON.stringify(test1));
-  assertIdentity(JSON.stringify(test1));
+  assertIdentity(test1);
 });
 
 it("should handle edge cases around non-truthy values", () => {
