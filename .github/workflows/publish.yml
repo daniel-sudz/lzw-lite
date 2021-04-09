@@ -1,0 +1,29 @@
+name: NPMJS-Publish
+
+on:
+  push:
+    branches: [ main ]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+          registry-url: 'https://npm.pkg.github.com'
+      - name: Publish
+        run: |
+          npm i
+          npm run tsc         # type check with plain tsc just in case
+          npm run test        # run tests just in case
+          npm run webpack     # build production bundles
+          npm run ts-publish  # link .d.ts declaration files to publish folder
+          npm config set //registry.npmjs.org/:_authToken $NPM_AUTH_TOKEN
+          npm publish         # ship it 🚀🚀🚀
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM }}
