@@ -25,6 +25,7 @@ jobs:
           npm run webpack     # build production bundles
           npm run ts-publish  # link .d.ts declaration files to publish folder
           npm config set //registry.npmjs.org/:_authToken $NPM_AUTH_TOKEN
+          git stash           # clean-up working directory for version patch
           npm version patch   # auto prepend version bump
           npm publish         # ship it 🚀🚀🚀
         env:
