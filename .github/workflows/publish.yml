@@ -17,28 +17,25 @@ jobs:
           node-version: '12.x'
           registry-url: 'https://npm.pkg.github.com'
           
-      - name: Init Git
+      - name: Init Git and Commit Version Bump
         run: |
           git config --global user.email "<>"
           git config --global user.name "Github Actions Bot"
+          git config pull.ff only                                           # fast forward branches
+          npm version patch                                                 # auto prepend version bump
+          git pull                                                          # in case another commit happened during workflow setup
+          git push
+          
           
       - name: Publish
         run: |
           npm i
-          npm run tsc         # type check with plain tsc just in case
-          npm run test        # run tests just in case
-          npm run webpack     # build production bundles
-          npm run ts-publish  # link .d.ts declaration files to publish folder
-          npm config set //registry.npmjs.org/:_authToken $NPM_AUTH_TOKEN
-          git stash           # clean-up working directory for version patch
-          npm version patch   # auto prepend version bump
-          npm publish         # ship it 🚀🚀🚀
+          npm run tsc                                                       # type check with plain tsc just in case
+          npm run test                                                      # run tests just in case
+          npm run webpack                                                   # build production bundles
+          npm run ts-publish                                                # link .d.ts declaration files to publish folder
+          npm config set //registry.npmjs.org/:_authToken $NPM_AUTH_TOKEN   # init NPM publish token
+          npm publish                                                       # ship it 🚀🚀🚀
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM }}
-          
-      - name: Commit Version Bump
-        run: |
-          git pull
-          git push
-        
 
